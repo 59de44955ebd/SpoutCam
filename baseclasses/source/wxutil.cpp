@@ -12,7 +12,7 @@
 #define STRSAFE_NO_DEPRECATE
 #include <strsafe.h>
 
-// 2018-07-24: added by Valentin Schmidt
+// 2018-07-24: added
 #include <versionhelpers.h>
 
 // --- CAMEvent -----------------------
