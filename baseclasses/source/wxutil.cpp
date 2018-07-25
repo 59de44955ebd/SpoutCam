@@ -12,6 +12,8 @@
 #define STRSAFE_NO_DEPRECATE
 #include <strsafe.h>
 
+// 2018-07-24: added by Valentin Schmidt
+#include <versionhelpers.h>
 
 // --- CAMEvent -----------------------
 CAMEvent::CAMEvent(BOOL fManualReset, __inout_opt HRESULT *phr)
@@ -95,7 +97,6 @@ BOOL CAMMsgEvent::WaitMsg(DWORD dwTimeout)
 
 // --- CAMThread ----------------------
 
-
 CAMThread::CAMThread(__inout_opt HRESULT *phr)
     : m_EventSend(TRUE, phr),     // must be manual-reset for CheckRequest()
       m_EventComplete(FALSE, phr)
@@ -106,7 +107,6 @@ CAMThread::CAMThread(__inout_opt HRESULT *phr)
 CAMThread::~CAMThread() {
     Close();
 }
-
 
 // when the thread starts, it calls this function. We unwrap the 'this'
 //pointer and call ThreadProc.
@@ -748,22 +748,6 @@ MMRESULT CompatibleTimeSetEvent( UINT uDelay, UINT uResolution, __in LPTIMECALLB
 
 bool TimeKillSynchronousFlagAvailable( void )
 {
-    OSVERSIONINFO osverinfo;
-
-    osverinfo.dwOSVersionInfoSize = sizeof(osverinfo);
-
-    if( GetVersionEx( &osverinfo ) ) {
-        
-        // Windows XP's major version is 5 and its' minor version is 1.
-        // timeSetEvent() started supporting the TIME_KILL_SYNCHRONOUS flag
-        // in Windows XP.
-        if( (osverinfo.dwMajorVersion > 5) || 
-            ( (osverinfo.dwMajorVersion == 5) && (osverinfo.dwMinorVersion >= 1) ) ) {
-            return true;
-        }
-    }
-
-    return false;
+	// timeSetEvent() started supporting the TIME_KILL_SYNCHRONOUS flag in Windows XP.
+	return IsWindowsXPOrGreater();
 }
-
-
